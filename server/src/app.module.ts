@@ -3,6 +3,7 @@ import { UserModule } from "./user/user.module";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { SecretsManagerModule } from "./providers/secrets/secretsManager.module";
+import { StorageModule } from "./storage/storage.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { ServeStaticOptionsService } from "./serveStaticOptions.service";
 import { ConfigModule, ConfigService } from "@nestjs/config";
@@ -15,6 +16,7 @@ import { AuthModule } from "./auth/auth.module";
 @Module({
   controllers: [],
   imports: [
+    StorageModule,
     ACLModule,
     AuthModule,
     UserModule,
