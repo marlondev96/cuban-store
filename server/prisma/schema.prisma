@@ -12,8 +12,10 @@ model User {
   email     String?  @unique
   firstName String?
   id        String   @id @default(cuid())
+  isAdmin   Boolean?
   lastName  String?
   password  String
+  photo     Json?
   roles     Json
   updatedAt DateTime @updatedAt
   username  String   @unique

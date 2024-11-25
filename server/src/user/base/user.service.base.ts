@@ -13,11 +13,16 @@ import { PrismaService } from "../../prisma/prisma.service";
 import { Prisma, User as PrismaUser } from "@prisma/client";
 import { PasswordService } from "../../auth/password.service";
 import { transformStringFieldUpdateInput } from "../../prisma.util";
+import { LocalStorageService } from "src/storage/providers/local/local.storage.service";
+import { InputJsonValue } from "src/types";
+import { FileDownload, FileUpload } from "src/storage/base/storage.types";
+import { LocalStorageFile } from "src/storage/providers/local/local.storage.types";
 
 export class UserServiceBase {
   constructor(
     protected readonly prisma: PrismaService,
-    protected readonly passwordService: PasswordService
+    protected readonly passwordService: PasswordService,
+    protected readonly localStorageService: LocalStorageService
   ) {}
 
   async count(args: Omit<Prisma.UserCountArgs, "select">): Promise<number> {
@@ -58,5 +63,61 @@ export class UserServiceBase {
   }
   async deleteUser(args: Prisma.UserDeleteArgs): Promise<PrismaUser> {
     return this.prisma.user.delete(args);
+  }
+
+  async uploadPhoto<T extends Prisma.UserFindUniqueArgs>(
+    args: Prisma.SelectSubset<T, Prisma.UserFindUniqueArgs>,
+    file: FileUpload
+  ): Promise<PrismaUser> {
+    file.filename = `profilePicture-${args.where.id}.${file.filename
+      .split(".")
+      .pop()}`;
+    const containerPath = "/profile";
+    const photo = await this.localStorageService.uploadFile(
+      file,
+      [],
+      5000,
+      containerPath
+    );
+
+    return await this.prisma.user.update({
+      where: args.where,
+
+      data: {
+        photo: photo as InputJsonValue,
+      },
+    });
+  }
+
+  async downloadPhoto<T extends Prisma.UserFindUniqueArgs>(
+    args: Prisma.SelectSubset<T, Prisma.UserFindUniqueArgs>
+  ): Promise<FileDownload> {
+    const { photo } = await this.prisma.user.findUniqueOrThrow({
+      where: args.where,
+    });
+
+    return await this.localStorageService.downloadFile(
+      photo as unknown as LocalStorageFile
+    );
+  }
+
+  async deletePhoto<T extends Prisma.UserFindUniqueArgs>(
+    args: Prisma.SelectSubset<T, Prisma.UserFindUniqueArgs>
+  ): Promise<PrismaUser> {
+    const { photo } = await this.prisma.user.findUniqueOrThrow({
+      where: args.where,
+    });
+
+    await this.localStorageService.deleteFile(
+      photo as unknown as LocalStorageFile
+    );
+
+    return await this.prisma.user.update({
+      where: args.where,
+
+      data: {
+        photo: Prisma.DbNull,
+      },
+    });
   }
 }
