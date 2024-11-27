@@ -6,10 +6,13 @@ import {
   EditProps,
   TextInput,
   BooleanInput,
-  PasswordInput,
+  ReferenceArrayInput,
   SelectArrayInput,
+  PasswordInput,
 } from "react-admin";
 
+import { OrderTitle } from "../order/OrderTitle";
+import { ReviewTitle } from "../review/ReviewTitle";
 import { ROLES_OPTIONS } from "../user/RolesOptions";
 
 export const UserEdit = (props: EditProps): React.ReactElement => {
@@ -20,8 +23,22 @@ export const UserEdit = (props: EditProps): React.ReactElement => {
         <TextInput label="First Name" source="firstName" />
         <BooleanInput label="isAdmin" source="isAdmin" />
         <TextInput label="Last Name" source="lastName" />
+        <ReferenceArrayInput source="orders" reference="Order">
+          <SelectArrayInput
+            optionText={OrderTitle}
+            parse={(value: any) => value && value.map((v: any) => ({ id: v }))}
+            format={(value: any) => value && value.map((v: any) => v.id)}
+          />
+        </ReferenceArrayInput>
         <PasswordInput label="Password" source="password" />
         <div />
+        <ReferenceArrayInput source="reviews" reference="Review">
+          <SelectArrayInput
+            optionText={ReviewTitle}
+            parse={(value: any) => value && value.map((v: any) => ({ id: v }))}
+            format={(value: any) => value && value.map((v: any) => v.id)}
+          />
+        </ReferenceArrayInput>
         <SelectArrayInput
           source="roles"
           choices={ROLES_OPTIONS}
