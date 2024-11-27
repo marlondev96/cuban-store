@@ -7,6 +7,46 @@ input BooleanNullableFilter {
   not: Boolean
 }
 
+type Category {
+  createdAt: DateTime!
+  id: String!
+  name: String
+  products(orderBy: [ProductOrderByInput!], skip: Float, take: Float, where: ProductWhereInput): [Product!]!
+  subcategory: Subcategory
+  updatedAt: DateTime!
+}
+
+input CategoryCreateInput {
+  name: String
+  products: ProductCreateNestedManyWithoutCategoriesInput
+  subcategory: SubcategoryWhereUniqueInput
+}
+
+input CategoryOrderByInput {
+  createdAt: SortOrder
+  id: SortOrder
+  name: SortOrder
+  subcategoryId: SortOrder
+  updatedAt: SortOrder
+}
+
+input CategoryUpdateInput {
+  name: String
+  products: ProductUpdateManyWithoutCategoriesInput
+  subcategory: SubcategoryWhereUniqueInput
+}
+
+input CategoryWhereInput {
+  id: StringFilter
+  name: StringNullableFilter
+  products: ProductListRelationFilter
+  subcategory: SubcategoryWhereUniqueInput
+}
+
+input CategoryWhereUniqueInput {
+  id: String!
+}
+
 input Credentials {
   password: String!
   username: String!
@@ -16,6 +56,105 @@ input Credentials {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+input DateTimeNullableFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: DateTime
+  notIn: [DateTime!]
+}
+
+input DecimalNullableFilter {
+  equals: Float
+  gt: Float
+  gte: Float
+  in: [Float!]
+  lt: Float
+  lte: Float
+  not: Float
+  notIn: [Float!]
+}
+
+type DiscountCuppon {
+  createdAt: DateTime!
+  dateEnd: DateTime
+  dateStart: DateTime
+  discountByCantity: Float
+  id: String!
+  percentDiscount: Float
+  products(orderBy: [ProductOrderByInput!], skip: Float, take: Float, where: ProductWhereInput): [Product!]!
+  title: String
+  updatedAt: DateTime!
+}
+
+input DiscountCupponCreateInput {
+  dateEnd: DateTime
+  dateStart: DateTime
+  discountByCantity: Float
+  percentDiscount: Float
+  products: ProductCreateNestedManyWithoutDiscountCupponsInput
+  title: String
+}
+
+input DiscountCupponOrderByInput {
+  createdAt: SortOrder
+  dateEnd: SortOrder
+  dateStart: SortOrder
+  discountByCantity: SortOrder
+  id: SortOrder
+  percentDiscount: SortOrder
+  title: SortOrder
+  updatedAt: SortOrder
+}
+
+input DiscountCupponUpdateInput {
+  dateEnd: DateTime
+  dateStart: DateTime
+  discountByCantity: Float
+  percentDiscount: Float
+  products: ProductUpdateManyWithoutDiscountCupponsInput
+  title: String
+}
+
+input DiscountCupponWhereInput {
+  dateEnd: DateTimeNullableFilter
+  dateStart: DateTimeNullableFilter
+  discountByCantity: DecimalNullableFilter
+  id: StringFilter
+  percentDiscount: DecimalNullableFilter
+  products: ProductListRelationFilter
+  title: StringNullableFilter
+}
+
+input DiscountCupponWhereUniqueInput {
+  id: String!
+}
+
+input FloatNullableFilter {
+  equals: Float
+  gt: Float
+  gte: Float
+  in: [Float!]
+  lt: Float
+  lte: Float
+  not: Float
+  notIn: [Float!]
+}
+
+input IntNullableFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: Int
+  notIn: [Int!]
+}
 
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
@@ -37,16 +176,280 @@ type MetaQueryPayload {
 }
 
 type Mutation {
+  createCategory(data: CategoryCreateInput!): Category!
+  createDiscountCuppon(data: DiscountCupponCreateInput!): DiscountCuppon!
+  createOrder(data: OrderCreateInput!): Order!
+  createProduct(data: ProductCreateInput!): Product!
+  createReview(data: ReviewCreateInput!): Review!
+  createSubcategory(data: SubcategoryCreateInput!): Subcategory!
   createUser(data: UserCreateInput!): User!
+  deleteCategory(where: CategoryWhereUniqueInput!): Category!
+  deleteDiscountCuppon(where: DiscountCupponWhereUniqueInput!): DiscountCuppon!
+  deleteImage1(where: ProductWhereUniqueInput!): Product!
+  deleteImage2(where: ProductWhereUniqueInput!): Product!
+  deleteImage3(where: ProductWhereUniqueInput!): Product!
+  deleteOrder(where: OrderWhereUniqueInput!): Order!
   deletePhoto(where: UserWhereUniqueInput!): User!
+  deleteProduct(where: ProductWhereUniqueInput!): Product!
+  deleteReview(where: ReviewWhereUniqueInput!): Review!
+  deleteSubcategory(where: SubcategoryWhereUniqueInput!): Subcategory!
   deleteUser(where: UserWhereUniqueInput!): User!
   login(credentials: Credentials!): UserInfo!
+  updateCategory(data: CategoryUpdateInput!, where: CategoryWhereUniqueInput!): Category!
+  updateDiscountCuppon(data: DiscountCupponUpdateInput!, where: DiscountCupponWhereUniqueInput!): DiscountCuppon!
+  updateOrder(data: OrderUpdateInput!, where: OrderWhereUniqueInput!): Order!
+  updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product!
+  updateReview(data: ReviewUpdateInput!, where: ReviewWhereUniqueInput!): Review!
+  updateSubcategory(data: SubcategoryUpdateInput!, where: SubcategoryWhereUniqueInput!): Subcategory!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User!
+  uploadImage1(file: Upload!, where: ProductWhereUniqueInput!): Product!
+  uploadImage2(file: Upload!, where: ProductWhereUniqueInput!): Product!
+  uploadImage3(file: Upload!, where: ProductWhereUniqueInput!): Product!
   uploadPhoto(file: Upload!, where: UserWhereUniqueInput!): User!
 }
 
+type Order {
+  createdAt: DateTime!
+  id: String!
+  paymentIntent: Boolean
+  paymentStatus: Boolean
+  price: Float
+  products(orderBy: [ProductOrderByInput!], skip: Float, take: Float, where: ProductWhereInput): [Product!]!
+  ship: String
+  shipDates: JSON
+  status: JSON
+  updatedAt: DateTime!
+  user: User
+}
+
+input OrderCreateInput {
+  paymentIntent: Boolean
+  paymentStatus: Boolean
+  price: Float
+  products: ProductCreateNestedManyWithoutOrdersInput
+  ship: String
+  shipDates: JSON
+  status: JSON
+  user: UserWhereUniqueInput
+}
+
+input OrderCreateNestedManyWithoutUsersInput {
+  connect: [OrderWhereUniqueInput!]
+}
+
+input OrderListRelationFilter {
+  every: OrderWhereInput
+  none: OrderWhereInput
+  some: OrderWhereInput
+}
+
+input OrderOrderByInput {
+  createdAt: SortOrder
+  id: SortOrder
+  paymentIntent: SortOrder
+  paymentStatus: SortOrder
+  price: SortOrder
+  ship: SortOrder
+  shipDates: SortOrder
+  status: SortOrder
+  updatedAt: SortOrder
+  userId: SortOrder
+}
+
+input OrderUpdateInput {
+  paymentIntent: Boolean
+  paymentStatus: Boolean
+  price: Float
+  products: ProductUpdateManyWithoutOrdersInput
+  ship: String
+  shipDates: JSON
+  status: JSON
+  user: UserWhereUniqueInput
+}
+
+input OrderUpdateManyWithoutUsersInput {
+  connect: [OrderWhereUniqueInput!]
+  disconnect: [OrderWhereUniqueInput!]
+  set: [OrderWhereUniqueInput!]
+}
+
+input OrderWhereInput {
+  id: StringFilter
+  paymentIntent: BooleanNullableFilter
+  paymentStatus: BooleanNullableFilter
+  price: FloatNullableFilter
+  products: ProductListRelationFilter
+  ship: StringNullableFilter
+  shipDates: JsonFilter
+  status: JsonFilter
+  user: UserWhereUniqueInput
+}
+
+input OrderWhereUniqueInput {
+  id: String!
+}
+
+type Product {
+  category: Category
+  colors: String
+  createdAt: DateTime!
+  description: JSON
+  discountCuppon: DiscountCuppon
+  discountPrice: Float
+  id: String!
+  image1: JSON
+  image2: JSON
+  image3: JSON
+  images: JSON
+  order: Order
+  reviews(orderBy: [ReviewOrderByInput!], skip: Float, take: Float, where: ReviewWhereInput): [Review!]!
+  subcategory: Subcategory
+  title: String
+  titlePrice: Float
+  updatedAt: DateTime!
+}
+
+input ProductCreateInput {
+  category: CategoryWhereUniqueInput
+  colors: String
+  description: JSON
+  discountCuppon: DiscountCupponWhereUniqueInput
+  discountPrice: Float
+  image1: JSON
+  image2: JSON
+  image3: JSON
+  images: JSON
+  order: OrderWhereUniqueInput
+  reviews: ReviewCreateNestedManyWithoutProductsInput
+  subcategory: SubcategoryWhereUniqueInput
+  title: String
+  titlePrice: Float
+}
+
+input ProductCreateNestedManyWithoutCategoriesInput {
+  connect: [ProductWhereUniqueInput!]
+}
+
+input ProductCreateNestedManyWithoutDiscountCupponsInput {
+  connect: [ProductWhereUniqueInput!]
+}
+
+input ProductCreateNestedManyWithoutOrdersInput {
+  connect: [ProductWhereUniqueInput!]
+}
+
+input ProductCreateNestedManyWithoutSubcategoriesInput {
+  connect: [ProductWhereUniqueInput!]
+}
+
+input ProductListRelationFilter {
+  every: ProductWhereInput
+  none: ProductWhereInput
+  some: ProductWhereInput
+}
+
+input ProductOrderByInput {
+  categoryId: SortOrder
+  colors: SortOrder
+  createdAt: SortOrder
+  description: SortOrder
+  discountCupponId: SortOrder
+  discountPrice: SortOrder
+  id: SortOrder
+  image1: SortOrder
+  image2: SortOrder
+  image3: SortOrder
+  images: SortOrder
+  orderId: SortOrder
+  subcategoryId: SortOrder
+  title: SortOrder
+  titlePrice: SortOrder
+  updatedAt: SortOrder
+}
+
+input ProductUpdateInput {
+  category: CategoryWhereUniqueInput
+  colors: String
+  description: JSON
+  discountCuppon: DiscountCupponWhereUniqueInput
+  discountPrice: Float
+  image1: JSON
+  image2: JSON
+  image3: JSON
+  images: JSON
+  order: OrderWhereUniqueInput
+  reviews: ReviewUpdateManyWithoutProductsInput
+  subcategory: SubcategoryWhereUniqueInput
+  title: String
+  titlePrice: Float
+}
+
+input ProductUpdateManyWithoutCategoriesInput {
+  connect: [ProductWhereUniqueInput!]
+  disconnect: [ProductWhereUniqueInput!]
+  set: [ProductWhereUniqueInput!]
+}
+
+input ProductUpdateManyWithoutDiscountCupponsInput {
+  connect: [ProductWhereUniqueInput!]
+  disconnect: [ProductWhereUniqueInput!]
+  set: [ProductWhereUniqueInput!]
+}
+
+input ProductUpdateManyWithoutOrdersInput {
+  connect: [ProductWhereUniqueInput!]
+  disconnect: [ProductWhereUniqueInput!]
+  set: [ProductWhereUniqueInput!]
+}
+
+input ProductUpdateManyWithoutSubcategoriesInput {
+  connect: [ProductWhereUniqueInput!]
+  disconnect: [ProductWhereUniqueInput!]
+  set: [ProductWhereUniqueInput!]
+}
+
+input ProductWhereInput {
+  category: CategoryWhereUniqueInput
+  colors: StringNullableFilter
+  description: JsonFilter
+  discountCuppon: DiscountCupponWhereUniqueInput
+  discountPrice: FloatNullableFilter
+  id: StringFilter
+  image1: JsonFilter
+  image2: JsonFilter
+  image3: JsonFilter
+  images: JsonFilter
+  order: OrderWhereUniqueInput
+  reviews: ReviewListRelationFilter
+  subcategory: SubcategoryWhereUniqueInput
+  title: StringNullableFilter
+  titlePrice: FloatNullableFilter
+}
+
+input ProductWhereUniqueInput {
+  id: String!
+}
+
 type Query {
+  _categoriesMeta(where: CategoryWhereInput): MetaQueryPayload!
+  _discountCupponsMeta(where: DiscountCupponWhereInput): MetaQueryPayload!
+  _ordersMeta(where: OrderWhereInput): MetaQueryPayload!
+  _productsMeta(where: ProductWhereInput): MetaQueryPayload!
+  _reviewsMeta(where: ReviewWhereInput): MetaQueryPayload!
+  _subcategoriesMeta(where: SubcategoryWhereInput): MetaQueryPayload!
   _usersMeta(where: UserWhereInput): MetaQueryPayload!
+  categories(orderBy: [CategoryOrderByInput!], skip: Float, take: Float, where: CategoryWhereInput): [Category!]!
+  category(where: CategoryWhereUniqueInput!): Category
+  discountCuppon(where: DiscountCupponWhereUniqueInput!): DiscountCuppon
+  discountCuppons(orderBy: [DiscountCupponOrderByInput!], skip: Float, take: Float, where: DiscountCupponWhereInput): [DiscountCuppon!]!
+  order(where: OrderWhereUniqueInput!): Order
+  orders(orderBy: [OrderOrderByInput!], skip: Float, take: Float, where: OrderWhereInput): [Order!]!
+  product(where: ProductWhereUniqueInput!): Product
+  products(orderBy: [ProductOrderByInput!], skip: Float, take: Float, where: ProductWhereInput): [Product!]!
+  review(where: ReviewWhereUniqueInput!): Review
+  reviews(orderBy: [ReviewOrderByInput!], skip: Float, take: Float, where: ReviewWhereInput): [Review!]!
+  subcategories(orderBy: [SubcategoryOrderByInput!], skip: Float, take: Float, where: SubcategoryWhereInput): [Subcategory!]!
+  subcategory(where: SubcategoryWhereUniqueInput!): Subcategory
   user(where: UserWhereUniqueInput!): User
   userInfo: UserInfo!
   users(orderBy: [UserOrderByInput!], skip: Float, take: Float, where: UserWhereInput): [User!]!
@@ -55,6 +458,73 @@ type Query {
 enum QueryMode {
   Default
   Insensitive
+}
+
+type Review {
+  createdAt: DateTime!
+  id: String!
+  product: Product
+  rating: Float
+  updatedAt: DateTime!
+  user: User
+}
+
+input ReviewCreateInput {
+  product: ProductWhereUniqueInput
+  rating: Float
+  user: UserWhereUniqueInput
+}
+
+input ReviewCreateNestedManyWithoutProductsInput {
+  connect: [ReviewWhereUniqueInput!]
+}
+
+input ReviewCreateNestedManyWithoutUsersInput {
+  connect: [ReviewWhereUniqueInput!]
+}
+
+input ReviewListRelationFilter {
+  every: ReviewWhereInput
+  none: ReviewWhereInput
+  some: ReviewWhereInput
+}
+
+input ReviewOrderByInput {
+  createdAt: SortOrder
+  id: SortOrder
+  productId: SortOrder
+  rating: SortOrder
+  updatedAt: SortOrder
+  userId: SortOrder
+}
+
+input ReviewUpdateInput {
+  product: ProductWhereUniqueInput
+  rating: Float
+  user: UserWhereUniqueInput
+}
+
+input ReviewUpdateManyWithoutProductsInput {
+  connect: [ReviewWhereUniqueInput!]
+  disconnect: [ReviewWhereUniqueInput!]
+  set: [ReviewWhereUniqueInput!]
+}
+
+input ReviewUpdateManyWithoutUsersInput {
+  connect: [ReviewWhereUniqueInput!]
+  disconnect: [ReviewWhereUniqueInput!]
+  set: [ReviewWhereUniqueInput!]
+}
+
+input ReviewWhereInput {
+  id: StringFilter
+  product: ProductWhereUniqueInput
+  rating: IntNullableFilter
+  user: UserWhereUniqueInput
+}
+
+input ReviewWhereUniqueInput {
+  id: String!
 }
 
 enum SortOrder {
@@ -92,6 +562,46 @@ input StringNullableFilter {
   startsWith: String
 }
 
+type Subcategory {
+  categories: Category
+  createdAt: DateTime!
+  id: String!
+  name: String
+  products(orderBy: [ProductOrderByInput!], skip: Float, take: Float, where: ProductWhereInput): [Product!]!
+  updatedAt: DateTime!
+}
+
+input SubcategoryCreateInput {
+  categories: CategoryWhereUniqueInput
+  name: String
+  products: ProductCreateNestedManyWithoutSubcategoriesInput
+}
+
+input SubcategoryOrderByInput {
+  categoriesId: SortOrder
+  createdAt: SortOrder
+  id: SortOrder
+  name: SortOrder
+  updatedAt: SortOrder
+}
+
+input SubcategoryUpdateInput {
+  categories: CategoryWhereUniqueInput
+  name: String
+  products: ProductUpdateManyWithoutSubcategoriesInput
+}
+
+input SubcategoryWhereInput {
+  categories: CategoryWhereUniqueInput
+  id: StringFilter
+  name: StringNullableFilter
+  products: ProductListRelationFilter
+}
+
+input SubcategoryWhereUniqueInput {
+  id: String!
+}
+
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
@@ -102,7 +612,9 @@ type User {
   id: String!
   isAdmin: Boolean
   lastName: String
+  orders(orderBy: [OrderOrderByInput!], skip: Float, take: Float, where: OrderWhereInput): [Order!]!
   photo: JSON
+  reviews(orderBy: [ReviewOrderByInput!], skip: Float, take: Float, where: ReviewWhereInput): [Review!]!
   roles: JSON!
   updatedAt: DateTime!
   username: String!
@@ -113,8 +625,10 @@ input UserCreateInput {
   firstName: String
   isAdmin: Boolean
   lastName: String
+  orders: OrderCreateNestedManyWithoutUsersInput
   password: String!
   photo: JSON
+  reviews: ReviewCreateNestedManyWithoutUsersInput
   roles: JSON!
   username: String!
 }
@@ -145,8 +659,10 @@ input UserUpdateInput {
   firstName: String
   isAdmin: Boolean
   lastName: String
+  orders: OrderUpdateManyWithoutUsersInput
   password: String
   photo: JSON
+  reviews: ReviewUpdateManyWithoutUsersInput
   roles: JSON
   username: String
 }
@@ -157,7 +673,9 @@ input UserWhereInput {
   id: StringFilter
   isAdmin: BooleanNullableFilter
   lastName: StringNullableFilter
+  orders: OrderListRelationFilter
   photo: JsonFilter
+  reviews: ReviewListRelationFilter
   username: StringFilter
 }
 
