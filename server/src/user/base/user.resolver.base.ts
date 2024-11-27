@@ -85,11 +85,14 @@ export class UserResolverBase {
     action: "create",
     possession: "any",
   })
-  async createUser(@graphql.Args() args: CreateUserArgs): Promise<User> {
+  
+  async createUser(@graphql.Args() args: CreateUserArgs, file: FileUpload,): Promise<User> {
+    
     return await this.service.createUser({
       ...args,
       data: args.data,
-    });
+      
+    },file);
   }
 
   @common.UseInterceptors(AclValidateRequestInterceptor)

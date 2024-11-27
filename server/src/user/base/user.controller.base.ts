@@ -36,7 +36,29 @@ export class UserControllerBase {
     protected readonly rolesBuilder: nestAccessControl.RolesBuilder
   ) {}
   @common.UseInterceptors(AclValidateRequestInterceptor)
+  
   @common.Post()
+  @common.UseInterceptors(FileInterceptor("file"))
+  @swagger.ApiConsumes("multipart/form-data")
+  @swagger.ApiBody({
+    schema: {
+      type: "object",
+
+      properties: {
+        email: { type: 'string' },
+        firstName: { type: 'string' },
+        lastName: { type: 'string' },
+        username: { type: 'string' },
+        password: { type: 'string' },
+        isAdmin:{ type: 'boolean' },
+        roles:{ type: 'json' },
+        file: {
+          type: "string",
+          format: "binary",
+        },
+      },
+    },
+  })
   @swagger.ApiCreatedResponse({ type: User })
   @nestAccessControl.UseRoles({
     resource: "User",
@@ -46,27 +68,27 @@ export class UserControllerBase {
   @swagger.ApiForbiddenResponse({
     type: errors.ForbiddenException,
   })
-  @swagger.ApiBody({
-    type: UserCreateInput,
-  })
-  async createUser(@common.Body() data: UserCreateInput): Promise<User> {
-    return await this.service.createUser({
+  // @swagger.ApiBody({
+  //   type: UserCreateInput,
+  // })
+  async createUser(
+    
+    @common.Body() 
+     data: UserCreateInput,
+    @common.UploadedFile()
+    file: Express.Multer.File
+  ): Promise<User> {
+    return this.service.createUser(
+      {
       data: data,
-      select: {
-        createdAt: true,
-        email: true,
-        firstName: true,
-        id: true,
-        isAdmin: true,
-        lastName: true,
-        photo: true,
-        roles: true,
-        updatedAt: true,
-        username: true,
-      },
-    });
+     
+    },
+      Object.assign(file, {
+        filename: file.originalname,
+        
+      })
+    );
   }
-
   @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [User] })

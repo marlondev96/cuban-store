@@ -15,7 +15,7 @@ import { PasswordService } from "../../auth/password.service";
 import { transformStringFieldUpdateInput } from "../../prisma.util";
 import { LocalStorageService } from "src/storage/providers/local/local.storage.service";
 import { InputJsonValue } from "src/types";
-import { FileDownload, FileUpload } from "src/storage/base/storage.types";
+import { FileDownload, FileUpload,StorageFileBase } from "src/storage/base/storage.types";
 import { LocalStorageFile } from "src/storage/providers/local/local.storage.types";
 
 export class UserServiceBase {
@@ -35,13 +35,28 @@ export class UserServiceBase {
   async user(args: Prisma.UserFindUniqueArgs): Promise<PrismaUser | null> {
     return this.prisma.user.findUnique(args);
   }
-  async createUser(args: Prisma.UserCreateArgs): Promise<PrismaUser> {
-    return this.prisma.user.create({
+  async createUser(
+    args: Prisma.UserCreateArgs,
+    file: FileUpload
+  ): Promise<PrismaUser> {
+    file.filename = `profilePicture-${args.data.id}.${file.filename
+      .split(".")
+      .pop()}`;
+    const containerPath = "/profile";
+    const photo = await this.localStorageService.uploadFile(
+      file,
+      [],
+      100000,
+      containerPath
+    );
+
+      return this.prisma.user.create({
       ...args,
 
       data: {
         ...args.data,
         password: await this.passwordService.hash(args.data.password),
+        photo: photo as InputJsonValue,
       },
     });
   }
